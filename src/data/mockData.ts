@@ -75,7 +75,7 @@ export const mockQuests: { daily: Quest[]; weekly: Quest[]; special: Quest[] } =
       description: "Complete all daily tasks for 3 days in a row",
       progress: 2,
       total: 3,
-      reward: 50,
+      reward: 2,
       difficulty: "Easy",
     },
     {
@@ -84,7 +84,7 @@ export const mockQuests: { daily: Quest[]; weekly: Quest[]; special: Quest[] } =
       description: "Maintain a 7-day streak on any habit",
       progress: 5,
       total: 7,
-      reward: 100,
+      reward: 2,
       difficulty: "Medium",
     },
   ],
@@ -95,7 +95,7 @@ export const mockQuests: { daily: Quest[]; weekly: Quest[]; special: Quest[] } =
       description: "Complete 30 tasks this week",
       progress: 18,
       total: 30,
-      reward: 200,
+      reward: 2,
       difficulty: "Medium",
     },
     {
@@ -104,7 +104,7 @@ export const mockQuests: { daily: Quest[]; weekly: Quest[]; special: Quest[] } =
       description: "Achieve 100% task completion for 7 days",
       progress: 3,
       total: 7,
-      reward: 300,
+      reward: 3,
       difficulty: "Hard",
     },
   ],
@@ -115,7 +115,7 @@ export const mockQuests: { daily: Quest[]; weekly: Quest[]; special: Quest[] } =
       description: "Create and maintain 5 different habits",
       progress: 3,
       total: 5,
-      reward: 150,
+      reward: 3,
       difficulty: "Medium",
     },
     {
@@ -124,16 +124,16 @@ export const mockQuests: { daily: Quest[]; weekly: Quest[]; special: Quest[] } =
       description: "Invite 3 friends to join PenguinPal",
       progress: 1,
       total: 3,
-      reward: 250,
+      reward: 2,
       difficulty: "Easy",
     },
     {
       icon: "💎",
       title: "Gem Collector",
-      description: "Earn a total of 1000 gems",
+      description: "Earn a total of 50 gems",
       progress: 248,
       total: 1000,
-      reward: 500,
+      reward: 3,
       difficulty: "Hard",
     },
   ],
@@ -160,10 +160,10 @@ export const mockWeeklyMoods = [
 ];
 
 export const mockGemHistory = [
-  { action: "Completed Morning Meditation", gems: 10, time: "2 hours ago" },
-  { action: "Quest: Consistency Champion", gems: 50, time: "Yesterday" },
-  { action: "Completed all daily tasks", gems: 25, time: "2 days ago" },
-  { action: "7-day streak bonus", gems: 100, time: "3 days ago" },
+  { action: "Completed Morning Meditation", gems: 1, time: "2 hours ago" },
+  { action: "Quest: Consistency Champion", gems: 2, time: "Yesterday" },
+  { action: "Completed all daily tasks", gems: 1, time: "2 days ago" },
+  { action: "7-day streak bonus", gems: 3, time: "3 days ago" },
 ];
 
 export const mockGroups = [

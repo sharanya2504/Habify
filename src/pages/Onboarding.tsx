@@ -28,6 +28,7 @@ export default function Onboarding() {
       mascot,
       level: 1,
       xp: 0,
+      totalGems: 0,
       wakeTime,
       sleepTime,
       createdAt: new Date().toISOString(),

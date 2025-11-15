@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
-
+import { Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Mascot } from "@/components/Mascot";
 import { HabitCard } from "@/components/HabitCard";
 import { ProgressBar } from "@/components/ProgressBar";
 import { CompletionDialog } from "@/components/CompletionDialog";
-import { Navigation } from "@/components/Navigation";
 import { useApp } from "@/contexts/AppContext";
+import { userState } from "@/data/userState";
+
+// Navigation
+import { TopNav } from "@/components/ui/top-nav";
+import { BottomNav } from "@/components/ui/bottom-nav";
 
 import { ProgressRing } from "@/components/ProgressRing";
 import penguinBlue from "@/assets/penguin-idle.png";
@@ -40,10 +43,10 @@ export default function Dashboard() {
 
   const xpForNextLevel = profile.level * 100;
 
-  // Toggle habit
-  const handleToggleHabit = (habitId) => {
+  const handleToggleHabit = (habitId: string) => {
     const habit = habits.find((h) => h.id === habitId);
-    const isCompleting = habit && !habit.completedDates.includes(today);
+    const isCompleting =
+      habit && !habit.completedDates.includes(today);
 
     toggleHabitComplete(habitId);
 
@@ -52,7 +55,6 @@ export default function Dashboard() {
     }
   };
 
-  // Greeting text
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "🌞 Good morning";
@@ -61,11 +63,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 px-4 md:px-0">
+    <div className="min-h-screen bg-background pb-24 md:pb-8 px-4 md:px-0">
+
+      {/* 👆 Top Navbar (Laptop Only) */}
+      <TopNav />
 
       {/* TOP CARD */}
       <Card className="glass-effect rounded-3xl p-6 mt-6 relative overflow-hidden max-w-lg mx-auto">
-
+        
         {/* Progress Ring */}
         <div className="absolute top-4 right-4 scale-75 md:scale-90 z-20">
           <ProgressRing progress={completionPercent} size={110} />
@@ -80,7 +85,7 @@ export default function Dashboard() {
           You're doing amazing today 💜
         </p>
 
-        {/* Grid */}
+        {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center relative z-10">
 
           {/* Penguin */}
@@ -97,8 +102,12 @@ export default function Dashboard() {
 
             {/* Level & XP */}
             <div>
-              <p className="text-sm text-muted-foreground">Level {profile.level}</p>
-              <p className="text-2xl font-bold text-primary">{profile.xp} XP</p>
+              <p className="text-sm text-muted-foreground">
+                Level {profile.level}
+              </p>
+              <p className="text-2xl font-bold text-primary">
+                {profile.xp} XP
+              </p>
 
               <ProgressBar
                 current={profile.xp % xpForNextLevel}
@@ -109,14 +118,27 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* Streak */}
-            <div>
-              <p className="text-sm text-muted-foreground">Streak</p>
-              <p className="text-2xl font-bold text-secondary">
-                {Math.max(...habits.map((h) => h.currentStreak), 0)} 🔥
-              </p>
-            </div>
+            {/* Streak + Gems Row */}
+<div className="grid grid-cols-2 gap-6">
 
+  {/* Streak */}
+  <div>
+    <p className="text-sm text-muted-foreground">Streak</p>
+    <p className="text-2xl font-bold text-secondary flex items-center gap-1">
+      {Math.max(...habits.map((h) => h.currentStreak), 0)} 🔥
+    </p>
+  </div>
+
+  {/* Gems */}
+  <div>
+    <p className="text-sm text-muted-foreground">Gems</p>
+    <p className="text-2xl font-bold flex items-center gap-2 text-gem">
+      <Gem className="w-5 h-5 text-gem fill-gem" />
+      {profile.totalGems ?? 0}
+    </p>
+  </div>
+
+</div>
           </div>
         </div>
       </Card>
@@ -131,7 +153,7 @@ export default function Dashboard() {
           </span>
         </div>
 
-        {/* If No Habits */}
+        {/* IF NO HABITS */}
         {todayHabits.length === 0 ? (
           <Card className="p-8 text-center glass-effect">
             <p className="text-muted-foreground mb-4">
@@ -157,7 +179,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Add Habit Button */}
+        {/* ADD HABIT BUTTON */}
         {todayHabits.length > 0 && (
           <Button
             onClick={() => navigate("/create-habit")}
@@ -169,15 +191,15 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Completion Popup */}
+      {/* COMPLETION POPUP */}
       <CompletionDialog
         open={showCompletion}
         onClose={() => setShowCompletion(false)}
         xpGained={10}
       />
 
-      {/* Bottom Navigation */}
-      <Navigation />
+      {/* 👇 Bottom Navigation (Mobile Only) */}
+      <BottomNav />
     </div>
   );
 }

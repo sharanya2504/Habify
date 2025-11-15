@@ -5,7 +5,9 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+
 import { UserProfile, Habit, Achievement, Journey } from "@/types/habit";
+import { achievementsList } from "@/data/achievements"; // ⭐ NEW FILE YOU CREATED
 
 interface AppContextType {
   profile: UserProfile | null;
@@ -20,9 +22,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // -------------------------------
   // PROFILE STATE
   // -------------------------------
@@ -40,42 +40,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   // -------------------------------
-  // ACHIEVEMENTS (STATIC)
+  // ACHIEVEMENTS (DYNAMIC + SAVED)
   // -------------------------------
-  const [achievements] = useState<Achievement[]>([
-    {
-      id: "1",
-      name: "Rising Blossom",
-      description: "Complete your first habit",
-      icon: "🌸",
-      requirement: 1,
-      progress: 0,
-    },
-    {
-      id: "2",
-      name: "Consistency Penguin",
-      description: "Maintain a 7-day streak",
-      icon: "🐧",
-      requirement: 7,
-      progress: 0,
-    },
-    {
-      id: "3",
-      name: "Focus Star",
-      description: "Complete 20 habits",
-      icon: "⭐",
-      requirement: 20,
-      progress: 0,
-    },
-    {
-      id: "4",
-      name: "Self-Care Hero",
-      description: "Complete 50 habits",
-      icon: "💜",
-      requirement: 50,
-      progress: 0,
-    },
-  ]);
+  const [achievements, setAchievements] = useState<Achievement[]>(() => {
+    const saved = localStorage.getItem("rehabit_achievements");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // -------------------------------
   // JOURNEYS (STATIC)
@@ -120,6 +90,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   }, [habits]);
 
   // -------------------------------
+  // SAVE ACHIEVEMENTS TO STORAGE
+  // -------------------------------
+  useEffect(() => {
+    localStorage.setItem("rehabit_achievements", JSON.stringify(achievements));
+  }, [achievements]);
+
+  // -------------------------------
   // SET PROFILE
   // -------------------------------
   const setProfile = (newProfile: UserProfile) => {
@@ -127,14 +104,84 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   // -------------------------------
-  // ADD HABIT (SAFE)
+  // ADD HABIT
   // -------------------------------
   const addHabit = (habit: Habit) => {
     setHabits((prev) => [...prev, habit]);
   };
 
   // -------------------------------
-  // TOGGLE HABIT COMPLETE (FIXED)
+  // CALCULATE GLOBAL STREAK
+  // -------------------------------
+  function computeStreak(): number {
+    if (!habits.length) return 0;
+
+    let streak = 0;
+    let cursor = new Date();
+
+    while (true) {
+      const iso = cursor.toISOString().split("T")[0];
+
+      const completedToday = habits.some((h) =>
+        h.completedDates.includes(iso)
+      );
+
+      if (completedToday) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }
+
+  // -------------------------------
+  // UNLOCK ACHIEVEMENTS
+  // -------------------------------
+  function updateAchievements() {
+    const updated = [...achievements];
+
+    const streak = computeStreak();
+    const level = profile?.level ?? 0;
+
+    achievementsList.forEach((ach) => {
+      const alreadyUnlocked = updated.find((a) => a.id === ach.id);
+
+      // Unlock (LEVEL)
+      if (ach.type === "level" && level >= ach.levelRequired) {
+        if (!alreadyUnlocked) {
+          updated.push({
+            ...ach,
+            unlocked: true,
+            unlockedAt: new Date().toISOString(),
+          });
+        }
+      }
+
+      // Unlock (STREAK)
+      if (ach.type === "streak" && streak >= ach.streakRequired) {
+        if (!alreadyUnlocked) {
+          updated.push({
+            ...ach,
+            unlocked: true,
+            unlockedAt: new Date().toISOString(),
+          });
+        }
+      }
+    });
+
+    setAchievements(updated);
+  }
+
+  // Trigger unlock checks when level or streak changes
+  useEffect(() => {
+    updateAchievements();
+  }, [profile?.level, habits]);
+
+  // -------------------------------
+  // TOGGLE HABIT COMPLETE
   // -------------------------------
   const toggleHabitComplete = (habitId: string) => {
     const today = new Date().toISOString().split("T")[0];
@@ -145,17 +192,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 
         const alreadyCompleted = habit.completedDates.includes(today);
 
-        // Update completedDates
         const updatedDates = alreadyCompleted
           ? habit.completedDates.filter((d) => d !== today)
           : [...habit.completedDates, today];
 
-        // Update streak
         const newStreak = alreadyCompleted
           ? Math.max(0, habit.currentStreak - 1)
           : habit.currentStreak + 1;
 
-        // XP update (safe)
+        // XP + LEVEL update
         if (!alreadyCompleted) {
           setProfileState((prevProfile) =>
             prevProfile
@@ -211,8 +256,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 // -------------------------------
 export const useApp = () => {
   const context = useContext(AppContext);
-  if (!context)
-    throw new Error("useApp must be used within AppProvider");
-
+  if (!context) throw new Error("useApp must be used within AppProvider");
   return context;
 };

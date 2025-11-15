@@ -2,6 +2,23 @@
 // All UI text and small literal tokens (emojis, labels, placeholders, messages) grouped by page.
 
 export const APP_TEXT = {
+  groupDetails: {
+    notFound: "Group not found",
+    maxStreakTitle: "Max Streak",
+    avgStreakTitle: "Average Streak",
+    avgStreakSubtitle: "Group average",
+    completionTitle: "Completion Rate",
+    completionSubtitle: "Average daily completion",
+    membersTitle: "Members",
+    membersGrowthSuffix: "this week",
+    leaderboardTitle: "Top performers",
+    weeklyTitle: "Weekly Activity",
+    membersTitleFull: "Members",
+    addFriendBtn: "Add Friend",
+    friendLabel: "Friends ✓",
+    viewButton: "View Details",
+  },
+
   social: {
     pageTitle: "Social",
     pageSubtitle: "Connect with friends and join groups to stay motivated",
@@ -28,7 +45,8 @@ export const APP_TEXT = {
     },
 
     travelingTitle: "Traveling Together",
-    travelingText: "When you and your friends complete tasks, your pets travel together!",
+    travelingText:
+      "When you and your friends complete tasks, your pets travel together!",
 
     friendLabels: {
       petLabel: "Pet",
@@ -60,6 +78,7 @@ export const APP_TEXT = {
       },
     },
   },
+
   buttons: {
     add: "Add",
     addTask: "Add Task",
@@ -122,7 +141,8 @@ export const APP_TEXT = {
     streakText: "day streak",
     gemsText: "gems",
     travelingTitle: "Traveling Together",
-    travelingText: "When you and your friends complete tasks, your penguins travel together!",
+    travelingText:
+      "When you and your friends complete tasks, your penguins travel together!",
   },
 
   profile: {
@@ -161,7 +181,8 @@ export const APP_TEXT = {
 
   quests: {
     pageTitle: "Quests",
-    pageSubtitle: "Complete quests to earn bonus gems and level up your penguin!",
+    pageSubtitle:
+      "Complete quests to earn bonus gems and level up your penguin!",
     tabs: {
       daily: "Daily",
       weekly: "Weekly",

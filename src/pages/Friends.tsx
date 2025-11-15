@@ -1,14 +1,16 @@
-// src/pages/Friends.tsx
 "use client";
 
 import { useState } from "react";
+import { getStoredFriends, storeFriends } from "@/lib/storage";
 
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { TopNav } from "@/components/ui/top-nav";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 import AddFriendModal from "@/components/social/add-friend-modal";
 import CreateGroupModal from "@/components/social/create-group-modal";
+import GroupDetailsModal from "@/components/social/group-details-modal";
 
 import { APP_TEXT } from "@/data/constants";
 import { TOKENS } from "@/data/constants";
@@ -19,8 +21,15 @@ const Friends = () => {
   const [showAddFriend, setShowAddFriend] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
 
-  const [friends, setFriends] = useState([...mockFriends]);
+  const [friends, setFriends] = useState<any[]>(() => {
+    const stored = getStoredFriends();
+    return stored ?? [...mockFriends];
+  });
+
+  const navigate = useNavigate();
+
   const [groups, setGroups] = useState([...mockGroups]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const handleRemoveFriend = (friendId: number) => {
     setFriends((prev) => prev.filter((f) => f.id !== friendId));
@@ -145,13 +154,6 @@ const Friends = () => {
                       {/* Actions */}
                       <div className="flex flex-col gap-2 justify-center sm:block">
                         <Button
-                          variant="outline"
-                          className="rounded-xl w-full sm:w-auto"
-                        >
-                          {APP_TEXT.buttons.viewProfile}
-                        </Button>
-
-                        <Button
                           variant="destructive"
                           className="rounded-xl w-full sm:w-auto"
                           onClick={() => handleRemoveFriend(friend.id)}
@@ -203,29 +205,37 @@ const Friends = () => {
 
             {/* Groups Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {groups.length > 0 ? (
-                groups.map((group) => (
-                  <div
-                    key={group.id}
-                    className="glass rounded-2xl p-6 flex flex-col"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="text-4xl">{group.avatar}</div>
+              {groups.map((group) => (
+                <div
+                  key={group.id}
+                  className="glass rounded-2xl p-6 flex flex-col"
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="text-4xl">{group.avatar}</div>
 
-                      <div>
-                        <h3 className="font-bold text-lg">{group.name}</h3>
-                        <p className="text-muted-foreground text-sm">{group.description}</p>
-                      </div>
+                    <div>
+                      <h3 className="font-bold text-lg">{group.name}</h3>
+                      <p className="text-muted-foreground text-sm">{group.description}</p>
                     </div>
+                  </div>
 
-                    <div className="flex justify-between text-sm mt-2 mb-4">
-                      <span>
-                        {group.members} {APP_TEXT.social.groupLabels.members}
-                      </span>
-                      <span>
-                        {group.totalPoints} {APP_TEXT.social.groupLabels.totalPoints}
-                      </span>
-                    </div>
+                  <div className="flex justify-between text-sm mt-2 mb-4">
+                    <span>
+                      {group.members} {APP_TEXT.social.groupLabels.members}
+                    </span>
+                    <span>
+                      {group.totalPoints} {APP_TEXT.social.groupLabels.totalPoints}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      className="rounded-xl w-full"
+                      onClick={() => navigate(`/groups/${group.id}`)}
+                    >
+                      View Details
+                    </Button>
 
                     <Button
                       variant="destructive"
@@ -235,13 +245,8 @@ const Friends = () => {
                       {APP_TEXT.buttons.leaveGroup}
                     </Button>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-12 bg-card rounded-2xl md:col-span-2">
-                  <p className="text-muted-foreground text-lg">{APP_TEXT.social.emptyGroups.title}</p>
-                  <p className="text-sm text-muted-foreground mt-2">{APP_TEXT.social.emptyGroups.subtitle}</p>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         )}
@@ -253,6 +258,14 @@ const Friends = () => {
       {showCreateGroup && <CreateGroupModal onClose={() => setShowCreateGroup(false)} />}
 
       <BottomNav />
+      {selectedGroup && (
+        <GroupDetailsModal
+          group={selectedGroup}
+          friends={friends}
+          setFriends={setFriends}
+          onClose={() => setSelectedGroup(null)}
+        />
+      )}
     </div>
   );
 };

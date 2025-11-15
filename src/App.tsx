@@ -6,18 +6,21 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { AppProvider, useApp } from "@/contexts/AppContext";
 
-// Your onboarding system
+// Onboarding flow pages
 import Onboarding from "./pages/Onboarding";
 import StreakIntro from "./pages/StreakIntro";
 import CreateHabit from "./pages/CreateHabit";
 
-// Friend’s pages
+// App feature pages
 import Dashboard from "./pages/Dashboard";
 import Quests from "./pages/Quests";
 import Friends from "./pages/Friends";
 import Profile from "./pages/Profile";
 import Progress from "./pages/Progress";
+import GroupDetails from "./pages/GroupDetails";   // ✅ ADD THIS
 import NotFound from "./pages/NotFound";
+import Achievements from "./pages/Achievements";
+
 
 const queryClient = new QueryClient();
 
@@ -34,15 +37,19 @@ const ProtectedRoute = ({ children }) => {
 // ----------------------
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AppProvider> {/* REQUIRED for useApp() */}
+    <AppProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
 
         <BrowserRouter>
           <Routes>
+            {/* PUBLIC ROUTES */}
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/streak-intro" element={<StreakIntro />} />
+            <Route path="/create-habit" element={<CreateHabit />} />
+
+            {/* PROTECTED ROUTES */}
             <Route
               path="/dashboard"
               element={
@@ -51,7 +58,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route path="/create-habit" element={<CreateHabit />} />
+
             <Route
               path="/quests"
               element={
@@ -70,6 +77,16 @@ const App = () => (
               }
             />
 
+            {/* ✅ NEW: GROUP DETAILS PAGE */}
+            <Route
+              path="/groups/:id"
+              element={
+                <ProtectedRoute>
+                  <GroupDetails />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/profile"
               element={
@@ -80,6 +97,15 @@ const App = () => (
             />
 
             <Route
+              path="/achievements"
+              element={
+                <ProtectedRoute>
+                  <Achievements />
+                </ProtectedRoute>
+            }
+          />
+
+            <Route
               path="/progress"
               element={
                 <ProtectedRoute>
@@ -88,12 +114,11 @@ const App = () => (
               }
             />
 
-            {/* Default route goes to onboarding */}
+            {/* DEFAULT: redirect home → onboarding */}
             <Route path="/" element={<Navigate to="/onboarding" replace />} />
 
-            {/* Not Found */}
+            {/* 404 PAGE */}
             <Route path="*" element={<NotFound />} />
-
           </Routes>
         </BrowserRouter>
 

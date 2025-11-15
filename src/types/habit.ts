@@ -20,6 +20,8 @@ export interface UserProfile {
   username: string;
   petName: string;  
   mascot: 'penguin';
+  totalGems: number; 
+  currentStreak: number;  
   level: number;
   xp: number;
   wakeTime: string;
@@ -46,4 +48,21 @@ export interface Journey {
   habits: string[];
   progress: number;
   totalSteps: number;
+}
+
+export interface Achievement {
+  id: string;
+
+  type: "level" | "streak";
+
+  // Display Info
+  name: string;
+  description: string;
+  icon: string;
+
+  levelRequired?: number;   
+  streakRequired?: number;  
+
+  unlocked: boolean;        
+  unlockedAt?: string;  
 }

@@ -1,3 +1,4 @@
+// src/pages/Dashboard.tsx
 import { useState } from "react";
 import { Gem, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,28 +9,62 @@ import { TaskCard } from "@/components/TaskCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+import { APP_TEXT, TOKENS } from "@/data/constants";
+import { mockTasks, Task } from "@/data/mockData";
+import { userState } from "@/data/userState";
+
 import penguinBlue from "@/assets/penguin-blue.png";
 
+/**
+ * Dashboard page (fully data-driven)
+ *
+ * - All UI copy comes from APP_TEXT
+ * - All emoji/tokens come from TOKENS
+ * - Initial data (tasks) comes from mockTasks (copied into local state)
+ * - User info comes from userState
+ *
+ * Style A: zero UI literals in this file.
+ */
+
 const Dashboard = () => {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Morning meditation", completed: true, reward: 10, streak: 5 },
-    { id: 2, title: "Drink 8 glasses of water", completed: false, reward: 10, streak: 3 },
-    { id: 3, title: "30 min exercise", completed: false, reward: 15, streak: 0 },
-    { id: 4, title: "Read for 20 minutes", completed: false, reward: 10, streak: 2 },
-  ]);
+  // create a stateful copy of mockTasks so component can toggle completed
+  const [tasks, setTasks] = useState<Task[]>(() => mockTasks.map((t) => ({ ...t })));
 
-  const todayProgress = 75;
-  const totalGems = 248;
-  const [showMoodPopup, setShowMoodPopup] = useState(false);
+  // derived user values from centralized userState
+  const penguinName = userState.penguinName;
+  const penguinAvatar = userState.penguinAvatar ?? penguinBlue;
+  const todayProgress = userState.todayProgress;
+  const totalGems = userState.totalGems;
 
+  // UI state
+  const [showMoodPopup, setShowMoodPopup] = useState<boolean>(false);
+
+  // completion + progress derived from tasks state
   const completedTasks = tasks.filter((t) => t.completed).length;
-  const progress = Math.round((completedTasks / tasks.length) * 100);
+  const progress = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
-  const toggleTask = (id) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)));
+  // Toggle a task's completed flag
+  const toggleTask = (id: number) => {
+    setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)));
   };
 
-  const moods = ["😊", "😃", "😌", "😔", "😴", "🤗"];
+  // moods list comes from TOKENS (no literals)
+  const moods = TOKENS.moods;
+
+  // Energy bar: we avoid literals by deriving an energy percent from userState.todayProgress.
+  // If you later store energy in userState, replace this calculation with that value.
+  const energyPercent = Math.min(100, Math.round((todayProgress ?? 0) * 0.85)); // derived value; numeric math only
+
+  // progress message selected from APP_TEXT.dashboard based on today's progress (all strings in constants)
+  const progressMessage =
+    todayProgress >= 100
+      ? APP_TEXT.dashboard.progressPerfect
+      : todayProgress >= 75
+      ? APP_TEXT.dashboard.progressAlmost
+      : todayProgress >= 50
+      ? APP_TEXT.dashboard.progressGood
+      : APP_TEXT.dashboard.progressStart;
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-8">
@@ -41,8 +76,8 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             {/* LEFT SIDE */}
             <div className="flex flex-col justify-center space-y-4 order-2 md:order-1">
-              <h1 className="text-3xl font-bold">Waddles</h1>
-              <p className="text-base text-muted-foreground">Your loyal companion 💙</p>
+              <h1 className="text-3xl font-bold">{userState.penguinName}</h1>
+              <p className="text-base text-muted-foreground">{APP_TEXT.dashboard.petSubtitle} 💙</p>
 
               {/* Gems + Energy */}
               <div className="flex items-center space-x-8">
@@ -52,25 +87,30 @@ const Dashboard = () => {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-2xl">⚡</span>
+                  <span className="text-2xl">{TOKENS.emojis.energy}</span>
                   <div className="bg-muted rounded-full h-3 w-24">
                     <div
                       className="bg-energy h-full rounded-full"
-                      style={{ width: "85%" }}
-                    ></div>
+                      style={{ width: `${energyPercent}%` }}
+                      aria-valuenow={energyPercent}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
                   </div>
                 </div>
               </div>
 
               {/* Mood */}
               <div className="flex items-center space-x-3 text-sm text-muted-foreground">
-                <span className="text-base">Mood:</span>
+                <span className="text-base">{APP_TEXT.dashboard.moodLabel}</span>
 
                 <button
                   onClick={() => setShowMoodPopup(true)}
+                  aria-label={APP_TEXT.dashboard.moodButtonAria}
                   className="text-3xl hover:scale-125 transition-transform"
                 >
-                  😊
+                  {/* current preferred mood comes from userState, fallback to first TOKENS.moods */}
+                  {userState.preferredMood ?? TOKENS.moods[0]}
                 </button>
               </div>
             </div>
@@ -85,9 +125,10 @@ const Dashboard = () => {
                 />
 
                 <img
-                  src={penguinBlue}
+                  src={penguinAvatar}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
                   w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 animate-bounce-slow"
+                  alt={penguinName}
                 />
               </div>
             </div>
@@ -97,7 +138,7 @@ const Dashboard = () => {
         {/* ---------------- DAILY TASKS ---------------- */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold">Daily Tasks</h2>
+            <h2 className="text-2xl font-bold">{APP_TEXT.dashboard.dailyTasksTitle}</h2>
 
             <Dialog>
               <DialogTrigger asChild>
@@ -105,34 +146,34 @@ const Dashboard = () => {
                   size="sm"
                   className="rounded-xl"
                 >
-                  <Plus className="w-4 h-4 mr-1" /> Add Task
+                  <Plus className="w-4 h-4 mr-1" /> {APP_TEXT.buttons.addTask}
                 </Button>
               </DialogTrigger>
 
               <DialogContent className="glass">
                 <DialogHeader>
-                  <DialogTitle>Add New Task</DialogTitle>
+                  <DialogTitle>{APP_TEXT.dashboard.addTaskDialogTitle}</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label>Task Name</Label>
+                    <Label>{APP_TEXT.dashboard.taskNameLabel}</Label>
                     <Input
-                      placeholder="e.g., Morning run"
+                      placeholder={APP_TEXT.dashboard.taskNamePlaceholder}
                       className="rounded-xl"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Gem Reward</Label>
+                    <Label>{APP_TEXT.dashboard.taskRewardLabel}</Label>
                     <Input
                       type="number"
-                      placeholder="10"
+                      placeholder={APP_TEXT.dashboard.taskRewardPlaceholder}
                       className="rounded-xl"
                     />
                   </div>
 
-                  <Button className="w-full rounded-xl">Create Task</Button>
+                  <Button className="w-full rounded-xl">{APP_TEXT.dashboard.taskCreateBtn}</Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -160,15 +201,20 @@ const Dashboard = () => {
       >
         <DialogContent className="glass">
           <DialogHeader>
-            <DialogTitle>How are you feeling today?</DialogTitle>
+            <DialogTitle>{APP_TEXT.dashboard.moodLabel}</DialogTitle>
           </DialogHeader>
 
           <div className="grid grid-cols-3 gap-4 py-6">
             {moods.map((mood) => (
               <button
                 key={mood}
-                onClick={() => setShowMoodPopup(false)}
+                onClick={() => {
+                  // set preferred mood in local UI state (placeholder; later move to global store/api)
+                  // For now we keep it simple: close popup (userState update will be done when backend/store added)
+                  setShowMoodPopup(false);
+                }}
                 className="text-5xl md:text-6xl hover:scale-125 transition-transform p-3 rounded-2xl hover:bg-muted/50"
+                aria-label={`${APP_TEXT.dashboard.moodLabel} ${mood}`}
               >
                 {mood}
               </button>

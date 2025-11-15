@@ -5,6 +5,7 @@
 import penguinBlue from "@/assets/penguin-blue.png";
 import penguinPink from "@/assets/penguin-pink.png";
 import penguinYellow from "@/assets/penguin-yellow.png";
+import penguinPurple from "@/assets/penguin-purple.png";
 
 export type Task = {
   id: number;
@@ -164,4 +165,120 @@ export const mockGemHistory = [
   { action: "Quest: Consistency Champion", gems: 50, time: "Yesterday" },
   { action: "Completed all daily tasks", gems: 25, time: "2 days ago" },
   { action: "7-day streak bonus", gems: 100, time: "3 days ago" },
+];
+
+// Add or replace this export in src/data/mockData.ts
+
+export const mockGroups = [
+  {
+    id: 1,
+    name: "Morning Warriors",
+    description: "Early risers committed to building morning routines",
+    members: 4,
+    totalPoints: 15420,
+    avatar: "🌅",
+    createdDate: "1 month ago",
+    weeklyActivity: [
+      { day: "Mon", value: 40 },
+      { day: "Tue", value: 50 },
+      { day: "Wed", value: 35 },
+      { day: "Thu", value: 60 },
+      { day: "Fri", value: 55 },
+      { day: "Sat", value: 20 },
+      { day: "Sun", value: 15 },
+    ],
+    membersList: [
+      {
+        id: 101,
+        name: "Alex Chen",
+        petName: "Frosty",
+        petSpecies: "Penguin",
+        avatar: penguinBlue,
+        gems: 310,
+        streak: 22,
+        dailyProgress: 100,
+      },
+      {
+        id: 102,
+        name: "Ravi Kumar",
+        petName: "Chilly",
+        petSpecies: "Panda",
+        avatar: penguinPink,
+        gems: 140,
+        streak: 12,
+        dailyProgress: 70,
+      },
+      {
+        id: 103,
+        name: "Sara Ali",
+        petName: "Bubbles",
+        petSpecies: "Bunny",
+        avatar: penguinYellow,
+        gems: 240,
+        streak: 18,
+        dailyProgress: 95,
+      },
+      {
+        id: 104,
+        name: "Mia Lopez",
+        petName: "Snowie",
+        petSpecies: "Penguin",
+        avatar: penguinPurple,
+        gems: 170,
+        streak: 9,
+        dailyProgress: 60,
+      },
+    ],
+  },
+
+  {
+    id: 2,
+    name: "Fitness Fanatics",
+    description: "Dedicated to daily exercise and health goals",
+    members: 3,
+    totalPoints: 9850,
+    avatar: "💪",
+    createdDate: "2 weeks ago",
+    weeklyActivity: [
+      { day: "Mon", value: 20 },
+      { day: "Tue", value: 35 },
+      { day: "Wed", value: 30 },
+      { day: "Thu", value: 45 },
+      { day: "Fri", value: 55 },
+      { day: "Sat", value: 40 },
+      { day: "Sun", value: 25 },
+    ],
+    membersList: [
+      {
+        id: 105,
+        name: "John Parker",
+        petName: "Bolt",
+        petSpecies: "Dog",
+        avatar: penguinBlue,
+        gems: 440,
+        streak: 31,
+        dailyProgress: 100,
+      },
+      {
+        id: 106,
+        name: "Nina Shah",
+        petName: "Zen",
+        petSpecies: "Panda",
+        avatar: penguinPink,
+        gems: 200,
+        streak: 15,
+        dailyProgress: 80,
+      },
+      {
+        id: 107,
+        name: "Chris Walter",
+        petName: "Dash",
+        petSpecies: "Cat",
+        avatar: penguinYellow,
+        gems: 320,
+        streak: 20,
+        dailyProgress: 90,
+      },
+    ],
+  },
 ];

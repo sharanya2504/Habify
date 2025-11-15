@@ -2,6 +2,96 @@
 // All UI text and small literal tokens (emojis, labels, placeholders, messages) grouped by page.
 
 export const APP_TEXT = {
+  groupDetails: {
+    notFound: "Group not found",
+    maxStreakTitle: "Max Streak",
+    avgStreakTitle: "Average Streak",
+    avgStreakSubtitle: "Group average",
+    completionTitle: "Completion Rate",
+    completionSubtitle: "Average daily completion",
+    membersTitle: "Members",
+    membersGrowthSuffix: "this week",
+    leaderboardTitle: "Top performers",
+    weeklyTitle: "Weekly Activity",
+    membersTitleFull: "Members",
+    addFriendBtn: "Add Friend",
+    friendLabel: "Friends ✓",
+    viewButton: "View Details",
+  },
+
+  social: {
+    pageTitle: "Social",
+    pageSubtitle: "Connect with friends and join groups to stay motivated",
+
+    tabs: {
+      friends: "Friends",
+      groups: "Groups",
+    },
+
+    addFriendButton: "Add Friend via Link",
+    createGroupButton: "Create New Group",
+
+    inviteLabel: "Share your link with friends",
+    copyButton: "Copy",
+
+    emptyFriends: {
+      title: "No friends yet",
+      subtitle: "Add friends to see their progress and compete",
+    },
+
+    emptyGroups: {
+      title: "No groups yet",
+      subtitle: "Create or join a group to collaborate with others",
+    },
+
+    travelingTitle: "Traveling Together",
+    travelingText: "When you and your friends complete tasks, your pets travel together!",
+
+    friendLabels: {
+      petLabel: "Pet",
+      streakLabel: "day streak",
+      gemsLabel: "gems",
+    },
+
+    groupLabels: {
+      members: "members",
+      totalPoints: "total points",
+    },
+
+    modals: {
+      addFriend: {
+        title: "Add Friend",
+        instruction: "Share your unique link or enter your friend's code",
+        placeholder: "Enter friend code",
+        submit: "Add",
+      },
+
+      createGroup: {
+        title: "Create Group",
+        instruction: "Build a group to collaborate and stay motivated",
+        nameLabel: "Group Name",
+        descriptionLabel: "Description",
+        namePlaceholder: "e.g., Morning Hustlers",
+        descPlaceholder: "What is your group about?",
+        submit: "Create",
+      },
+    },
+  },
+  buttons: {
+    add: "Add",
+    addTask: "Add Task",
+    createTask: "Create Task",
+    inviteFriend: "Invite Friend",
+
+    viewProfile: "View Profile",
+    editProfile: "Edit Profile",
+    changeName: "Change Name",
+    logout: "Logout",
+
+    leaveGroup: "Leave Group",
+    removeFriend: "Remove",
+  },
+
   common: {
     yes: "Yes",
     no: "No",
@@ -17,17 +107,6 @@ export const APP_TEXT = {
     quests: "Quests",
     friends: "Friends",
     profile: "Profile",
-  },
-
-  buttons: {
-    add: "Add",
-    addTask: "Add Task",
-    createTask: "Create Task",
-    inviteFriend: "Invite Friend",
-    viewProfile: "View Profile",
-    editProfile: "Edit Profile",
-    changeName: "Change Name",
-    logout: "Logout",
   },
 
   dashboard: {

@@ -15,6 +15,7 @@ import Friends from "./pages/Friends";
 import Profile from "./pages/Profile";
 import Progress from "./pages/Progress";
 import NotFound from "./pages/NotFound";
+import GroupDetails from "./pages/GroupDetails";
 
 const queryClient = new QueryClient();
 
@@ -25,19 +26,59 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/onboarding/color" element={<OnboardingColor />} />
-          <Route path="/onboarding/name" element={<OnboardingName />} />
-          <Route path="/onboarding/personality" element={<OnboardingPersonality />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/quests" element={<Quests />} />
-          <Route path="/friends" element={<Friends />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/progress" element={<Progress />} />
+          <Route
+            path="/"
+            element={<Index />}
+          />
+          <Route
+            path="/login"
+            element={<Login />}
+          />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+          <Route
+            path="/onboarding/color"
+            element={<OnboardingColor />}
+          />
+          <Route
+            path="/onboarding/name"
+            element={<OnboardingName />}
+          />
+          <Route
+            path="/onboarding/personality"
+            element={<OnboardingPersonality />}
+          />
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
+          />
+          <Route
+            path="/quests"
+            element={<Quests />}
+          />
+          <Route
+            path="/friends"
+            element={<Friends />}
+          />
+          <Route
+            path="/profile"
+            element={<Profile />}
+          />
+          <Route
+            path="/progress"
+            element={<Progress />}
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path="*"
+            element={<NotFound />}
+          />
+          <Route
+            path="/groups/:id"
+            element={<GroupDetails />}
+          />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

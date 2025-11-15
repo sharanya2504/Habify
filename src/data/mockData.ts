@@ -165,3 +165,33 @@ export const mockGemHistory = [
   { action: "Completed all daily tasks", gems: 25, time: "2 days ago" },
   { action: "7-day streak bonus", gems: 100, time: "3 days ago" },
 ];
+
+export const mockGroups = [
+  {
+    id: 1,
+    name: "Morning Warriors",
+    description: "Early risers committed to building morning routines",
+    members: 12,
+    totalPoints: 15420,
+    avatar: "🌅",
+    createdDate: "1 month ago",
+  },
+  {
+    id: 2,
+    name: "Fitness Fanatics",
+    description: "Dedicated to daily exercise and health goals",
+    members: 8,
+    totalPoints: 9850,
+    avatar: "💪",
+    createdDate: "2 weeks ago",
+  },
+  {
+    id: 3,
+    name: "Study Squad",
+    description: "Students supporting each other's learning goals",
+    members: 15,
+    totalPoints: 22100,
+    avatar: "📚",
+    createdDate: "3 weeks ago",
+  },
+];

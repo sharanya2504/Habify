@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ================================
+   DESIGN SYSTEM – ALL COLORS IN HSL
+   ================================ */
 
 @layer base {
   :root {
@@ -38,14 +38,14 @@ All colors MUST be HSL.
 
     --radius: 1rem;
 
-    /* Gamified theme colors */
+    /* Gamified Tokens */
     --gem: 50 100% 60%;
     --gem-glow: 50 100% 70%;
     --energy: 340 85% 75%;
     --happiness: 45 100% 65%;
     --success: 140 60% 60%;
     --warning: 35 100% 65%;
-    
+
     /* Gradient stops */
     --gradient-primary-start: 260 80% 70%;
     --gradient-primary-end: 200 70% 75%;
@@ -60,6 +60,7 @@ All colors MUST be HSL.
     --glass-bg: 0 0% 100% / 0.6;
     --glass-border: 250 30% 90% / 0.3;
 
+    /* Sidebar Theme */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -68,8 +69,17 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* ============================
+       CUSTOM HABIT COLORS
+       ============================ */
+    --lavender: 250 90% 92%;
+    --mint: 150 65% 88%;
+    --peach: 20 95% 88%;
+    --sky: 200 90% 90%;
   }
 
+  /* DARK MODE COLORS */
   .dark {
     --background: 250 30% 10%;
     --foreground: 250 20% 95%;
@@ -111,9 +121,8 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-}
 
-@layer base {
+  /* Global Defaults */
   * {
     @apply border-border;
   }
@@ -122,6 +131,10 @@ All colors MUST be HSL.
     @apply bg-background text-foreground font-sans antialiased;
   }
 }
+
+/* ================================
+   UTILITIES
+   ================================ */
 
 @layer utilities {
   .glass {
@@ -133,27 +146,45 @@ All colors MUST be HSL.
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--gradient-primary-start)), hsl(var(--gradient-primary-end)));
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-primary-start)),
+      hsl(var(--gradient-primary-end))
+    );
   }
 
   .gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--gradient-accent-start)), hsl(var(--gradient-accent-end)));
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-accent-start)),
+      hsl(var(--gradient-accent-end))
+    );
   }
 
   .gradient-success {
-    background: linear-gradient(135deg, hsl(var(--gradient-success-start)), hsl(var(--gradient-success-end)));
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-success-start)),
+      hsl(var(--gradient-success-end))
+    );
   }
 
   .gradient-hero {
-    background: linear-gradient(180deg, hsl(var(--gradient-hero-start)), hsl(var(--gradient-hero-end)));
+    background: linear-gradient(
+      180deg,
+      hsl(var(--gradient-hero-start)),
+      hsl(var(--gradient-hero-end))
+    );
   }
 
   .glow-gem {
-    box-shadow: 0 0 20px hsl(var(--gem-glow) / 0.5), 0 0 40px hsl(var(--gem-glow) / 0.3);
+    box-shadow: 0 0 20px hsl(var(--gem-glow) / 0.5),
+      0 0 40px hsl(var(--gem-glow) / 0.3);
   }
 
   .glow-primary {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.3), 0 0 40px hsl(var(--primary) / 0.2);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3),
+      0 0 40px hsl(var(--primary) / 0.2);
   }
 
   .animate-float {
@@ -176,16 +207,17 @@ All colors MUST be HSL.
       transform: translateY(-20px);
     }
   }
-  @keyframes jump {
-  0% { transform: translateY(0); }
-  20% { transform: translateY(-20px); }
-  40% { transform: translateY(0); }
-  60% { transform: translateY(-12px); }
-  80% { transform: translateY(0); }
-  100% { transform: translateY(0); }
-}
 
-.jump-animation {
-  animation: jump 1s ease-out forwards;
-}
+  @keyframes jump {
+    0% { transform: translateY(0); }
+    20% { transform: translateY(-20px); }
+    40% { transform: translateY(0); }
+    60% { transform: translateY(-12px); }
+    80% { transform: translateY(0); }
+    100% { transform: translateY(0); }
+  }
+
+  .jump-animation {
+    animation: jump 1s ease-out forwards;
+  }
 }

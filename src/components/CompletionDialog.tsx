@@ -28,7 +28,7 @@ export const CompletionDialog: React.FC<CompletionDialogProps> = ({ open, onClos
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent 
         className="sm:max-w-md text-center border-none bg-white p-8 
-                   shadow-xl rounded-2xl backdrop-blur-md bg-opacity-90"
+                   shadow-xl rounded-2xl backdrop-blur-md bg-opacity-30"
       >
         <div className="flex flex-col items-center gap-4">
 

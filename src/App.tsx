@@ -9,6 +9,7 @@ import { AppProvider, useApp } from "@/contexts/AppContext";
 // Your onboarding system
 import Onboarding from "./pages/Onboarding";
 import StreakIntro from "./pages/StreakIntro";
+import CreateHabit from "./pages/CreateHabit";
 
 // Friend’s pages
 import Dashboard from "./pages/Dashboard";
@@ -50,7 +51,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-
+            <Route path="/create-habit" element={<CreateHabit />} />
             <Route
               path="/quests"
               element={

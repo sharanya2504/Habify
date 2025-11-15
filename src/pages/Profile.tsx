@@ -66,20 +66,12 @@ const Profile = () => {
                 </div>
 
                 {/* Level */}
-                <div className="glass rounded-xl px-4 py-2">
-                  <p className="text-2xl font-bold">{`${APP_TEXT.labels.level} ${level}`}</p>
+                <div className="glass rounded-xl px-4 py-2 flex items-center gap-2">
+                  <p className="text-xl">{`${APP_TEXT.labels.level}`}</p>
+                  <p className="text-2xl font-bold">{`${level}`}</p>
                 </div>
               </div>
             </div>
-
-            {/* Edit Profile Button */}
-            <Button
-              variant="outline"
-              className="rounded-xl glass"
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              {APP_TEXT.profile.editBtn}
-            </Button>
           </div>
         </div>
 

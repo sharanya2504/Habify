@@ -5,6 +5,9 @@ app.use(express.json());
 const habitRoutes = require('./routers/habitRoutes');
 const userRoutes = require('./routers/userRoutes');
 const questRoutes = require('./routers/questRoutes');
+const friendRoutes = require('./routers/friendRoutes');
+const groupRoutes = require('./routers/groupRoutes');
+
 const cors = require("cors");
 app.use(cors({
     origin: "http://localhost:8080",
@@ -26,6 +29,9 @@ try {
 app.use('/api/users', userRoutes);
 app.use('/api/habits', habitRoutes);
 app.use('/api/quests', questRoutes);
+app.use('/api/friends', friendRoutes);
+app.use('/api/groups', groupRoutes);
+
 
 app.listen(3000,()=>{
     console.log("server running")

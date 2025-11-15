@@ -45,7 +45,7 @@ All colors MUST be HSL.
     --happiness: 45 100% 65%;
     --success: 140 60% 60%;
     --warning: 35 100% 65%;
-    
+
     /* Gradient stops */
     --gradient-primary-start: 260 80% 70%;
     --gradient-primary-end: 200 70% 75%;
@@ -169,11 +169,55 @@ All colors MUST be HSL.
   }
 
   @keyframes float {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0px);
     }
     50% {
       transform: translateY(-20px);
     }
   }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.25s ease-out;
 }

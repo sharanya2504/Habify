@@ -3,6 +3,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import InstallPWAButton from "@/components/InstallPWAButton";
+
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -24,6 +27,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+
       <BrowserRouter>
         <Routes>
           <Route
@@ -38,6 +42,7 @@ const App = () => (
             path="/register"
             element={<Register />}
           />
+
           <Route
             path="/onboarding/color"
             element={<OnboardingColor />}
@@ -50,6 +55,7 @@ const App = () => (
             path="/onboarding/personality"
             element={<OnboardingPersonality />}
           />
+
           <Route
             path="/dashboard"
             element={<Dashboard />}
@@ -70,17 +76,22 @@ const App = () => (
             path="/progress"
             element={<Progress />}
           />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route
-            path="*"
-            element={<NotFound />}
-          />
+
           <Route
             path="/groups/:id"
             element={<GroupDetails />}
           />
+
+          {/* Keep catch-all at the end */}
+          <Route
+            path="*"
+            element={<NotFound />}
+          />
         </Routes>
       </BrowserRouter>
+
+      {/* Add PWA Install Button Globally (always available when prompt is ready) */}
+      <InstallPWAButton />
     </TooltipProvider>
   </QueryClientProvider>
 );

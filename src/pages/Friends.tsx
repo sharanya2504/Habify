@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { getStoredFriends, storeFriends } from "@/lib/storage";
+import { loadFriends, addFriendToStorage, removeFriendFromStorage } from "@/lib/storage";
 
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { TopNav } from "@/components/ui/top-nav";
@@ -22,18 +22,16 @@ const Friends = () => {
   const [showAddFriend, setShowAddFriend] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
 
-  const [friends, setFriends] = useState<any[]>(() => {
-    const stored = getStoredFriends();
-    return stored ?? [...mockFriends];
-  });
+  const [friends, setFriends] = useState<any[]>(() => loadFriends());
 
   const navigate = useNavigate();
 
   const [groups, setGroups] = useState([...mockGroups]);
   const [selectedGroup, setSelectedGroup] = useState(null);
 
-  const handleRemoveFriend = (friendId: number) => {
-    setFriends((prev) => prev.filter((f) => f.id !== friendId));
+  const handleRemoveFriend = (id: number) => {
+    const updated = removeFriendFromStorage(id);
+    setFriends(updated);
   };
 
   const handleLeaveGroup = (groupId: number) => {
@@ -171,25 +169,6 @@ const Friends = () => {
                   <p className="text-sm text-muted-foreground mt-2">{APP_TEXT.social.emptyFriends.subtitle}</p>
                 </div>
               )}
-            </div>
-
-            {/* Traveling Together */}
-            <div className="glass rounded-2xl p-6 mt-8 text-center">
-              <h3 className="text-xl md:text-2xl font-bold mb-3">{APP_TEXT.social.travelingTitle}</h3>
-
-              <p className="text-sm md:text-base text-muted-foreground mb-5">{APP_TEXT.social.travelingText}</p>
-
-              <div className="flex justify-center items-center gap-3 md:gap-4">
-                {friends.slice(0, 3).map((friend, idx) => (
-                  <img
-                    key={friend.id}
-                    src={friend.avatar}
-                    alt=""
-                    className="w-16 h-16 md:w-20 md:h-20 animate-bounce-slow"
-                    style={{ animationDelay: `${(idx + 1) * 0.2}s` }}
-                  />
-                ))}
-              </div>
             </div>
           </div>
         )}

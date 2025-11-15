@@ -8,7 +8,7 @@ import { TopNav } from "@/components/ui/top-nav";
 import { Button } from "@/components/ui/button";
 import { APP_TEXT, TOKENS } from "@/data/constants";
 import { mockGroups } from "@/data/mockData";
-import { getStoredFriends, storeFriends } from "@/lib/storage";
+import { loadFriends, addFriendToStorage, removeFriendFromStorage } from "@/lib/storage";
 import penguinBlue from "@/assets/penguin-blue.png";
 
 /**
@@ -25,7 +25,7 @@ export default function GroupDetails() {
   const groupId = params.id ? Number(params.id) : null;
 
   const [group, setGroup] = useState<any | null>(null);
-  const [friends, setFriends] = useState<any[]>(() => getStoredFriends() ?? []);
+  const [friends, setFriends] = useState<any[]>(() => loadFriends());
   const [addedIds, setAddedIds] = useState<Set<number>>(() => new Set(friends.map((f) => f.id)));
 
   // load group on mount
@@ -113,7 +113,8 @@ export default function GroupDetails() {
     const next = [...friends, newFriend];
     setFriends(next);
     setAddedIds((s) => new Set(s).add(member.id));
-    storeFriends(next);
+    const updated = addFriendToStorage(newFriend);
+    setFriends(updated);
   };
 
   if (!group) {
@@ -219,60 +220,77 @@ export default function GroupDetails() {
         </div>
 
         {/* MEMBERS LIST */}
-        <div className="glass p-4 rounded-2xl">
-          <h3 className="font-bold mb-3">{APP_TEXT.groupDetails.membersTitleFull}</h3>
+        <div className="glass rounded-2xl p-6">
+          <h3 className="text-xl md:text-2xl font-bold mb-6">{APP_TEXT.groupDetails.membersTitleFull}</h3>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {(group.membersList ?? []).map((member: any) => {
               const isFriend = addedIds.has(member.id);
+
               return (
                 <div
                   key={member.id}
-                  className="flex items-center gap-4 p-3 rounded-xl bg-muted/10"
+                  className="glass rounded-2xl p-4 md:p-6 transition-all"
                 >
-                  <img
-                    src={member.avatar}
-                    alt=""
-                    className="w-14 h-14 rounded-xl"
-                  />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    {/* Avatar */}
+                    <div className="relative self-center sm:self-start">
+                      <img
+                        src={member.avatar}
+                        alt=""
+                        className="w-20 h-20 md:w-24 md:h-24 rounded-2xl"
+                      />
 
-                  {/* Info */}
-                  <div className="flex-1 text-center sm:text-left">
-                    <h3 className="text-lg md:text-xl font-bold mb-1">{member.name}</h3>
-
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {APP_TEXT.social.friendLabels.petLabel}: {member.petName}
-                    </p>
-
-                    <div className="flex justify-center sm:justify-start items-center gap-4 text-sm">
-                      <span className="flex items-center space-x-1">
-                        <span>{TOKENS.emojis.fire}</span>
-                        <span className="font-medium">
-                          {member.streak} {APP_TEXT.social.friendLabels.streakLabel}
-                        </span>
-                      </span>
-
-                      <span className="flex items-center space-x-1">
-                        <span>{TOKENS.emojis.gem}</span>
-                        <span className="font-medium">
-                          {member.gems} {APP_TEXT.social.friendLabels.gemsLabel}
-                        </span>
-                      </span>
+                      {isFriend && (
+                        <div
+                          className="absolute -bottom-2 -right-2 w-7 h-7 md:w-8 md:h-8 
+                              rounded-full bg-success flex items-center justify-center
+                              text-white text-xs font-bold border-4 border-background"
+                        >
+                          ✓
+                        </div>
+                      )}
                     </div>
-                  </div>
 
-                  <div>
-                    {isFriend ? (
-                      <span className="text-success font-semibold">{APP_TEXT.groupDetails.friendLabel}</span>
-                    ) : (
-                      <Button
-                        size="sm"
-                        className="rounded-xl"
-                        onClick={() => handleAddFriend(member)}
-                      >
-                        {APP_TEXT.groupDetails.addFriendBtn}
-                      </Button>
-                    )}
+                    {/* Info */}
+                    <div className="flex-1 text-center sm:text-left">
+                      <h3 className="text-lg md:text-xl font-bold mb-1">{member.name}</h3>
+
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {APP_TEXT.social.friendLabels.petLabel}: {member.petName}
+                      </p>
+
+                      <div className="flex justify-center sm:justify-start items-center gap-4 text-sm">
+                        <span className="flex items-center space-x-1">
+                          <span>{TOKENS.emojis.fire}</span>
+                          <span className="font-medium">
+                            {member.streak} {APP_TEXT.social.friendLabels.streakLabel}
+                          </span>
+                        </span>
+
+                        <span className="flex items-center space-x-1">
+                          <span>{TOKENS.emojis.gem}</span>
+                          <span className="font-medium">
+                            {member.gems} {APP_TEXT.social.friendLabels.gemsLabel}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col gap-2 justify-center sm:block">
+                      {isFriend ? (
+                        <span className="text-success font-semibold">{APP_TEXT.groupDetails.friendLabel}</span>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="rounded-xl w-full sm:w-auto"
+                          onClick={() => handleAddFriend(member)}
+                        >
+                          {APP_TEXT.groupDetails.addFriendBtn}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

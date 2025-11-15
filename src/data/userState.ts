@@ -1,6 +1,4 @@
 // src/data/userState.ts
-// Temporary local user state (will be replaced by global store / API when backend arrives).
-
 import penguinBlue from "@/assets/penguin-blue.png";
 
 export const userState = {
@@ -13,6 +11,11 @@ export const userState = {
   totalGems: 248,
   currentStreak: 12,
   level: 8,
+
+  // ADD THESE 2
+  xp: 0, // total accumulated XP
+  xpToNextLevel: 800, // 100 * current level (8 * 100 = 800)
+
   todayProgress: 75,
 
   // small UI-level preferences

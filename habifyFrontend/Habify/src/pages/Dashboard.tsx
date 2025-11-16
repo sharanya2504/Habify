@@ -4,11 +4,9 @@ import { Plus, Gem } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Mascot } from "@/components/Mascot";
 import { HabitCard } from "@/components/HabitCard";
 import { ProgressBar } from "@/components/ProgressBar";
 import { CompletionDialog } from "@/components/CompletionDialog";
-import { Navigation } from "@/components/Navigation";
 import { useApp } from "@/contexts/AppContext";
 
 // Navigation
@@ -20,7 +18,7 @@ import penguinBlue from "@/assets/penguin-idle.png";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { profile, habits, toggleHabitComplete } = useApp();
+  const { profile, habits, toggleHabitComplete, deleteHabit } = useApp();
   const [showCompletion, setShowCompletion] = useState(false);
 
   // Redirect if no profile
@@ -30,10 +28,9 @@ export default function Dashboard() {
   }
 
   const today = new Date().toISOString().split("T")[0];
-
   const todayHabits = habits.filter((h) => h.frequency === "daily");
 
-  // ✅ FIXED: Use completed (boolean) instead of completedDates array
+  // ✅ CONSISTENT: Use completed (boolean) for completion tracking
   const completedToday = todayHabits.filter((h) => h.completed).length;
 
   const completionPercent =
@@ -43,7 +40,7 @@ export default function Dashboard() {
 
   const xpForNextLevel = profile.level * 100;
 
-  // Toggle habit - ✅ FIXED: Handle both id and _id
+  // Toggle habit - ✅ Handle both id and _id
   const handleToggleHabit = (habitId: string) => {
     console.log('🔘 Toggle clicked for habit ID:', habitId);
     
@@ -57,6 +54,20 @@ export default function Dashboard() {
 
     if (isCompleting) {
       setShowCompletion(true);
+    }
+  };
+
+  // ✅ FIXED DELETE FUNCTION - Use context instead of direct localStorage
+  const handleDeleteHabit = (habitId: string) => {
+    console.log('🗑️ Deleting habit:', habitId);
+    
+    if (deleteHabit) {
+      deleteHabit(habitId);
+    } else {
+      console.error('❌ deleteHabit function not available in context');
+      // Fallback: Update context manually
+      const updatedHabits = habits.filter(h => h.id !== habitId && h._id !== habitId);
+      // You'll need to update your context to handle this
     }
   };
 
@@ -179,9 +190,10 @@ export default function Dashboard() {
               console.log('🔄 Rendering habit:', habit.title, 'ID:', habitId, 'completed:', habit.completed);
               return (
                 <HabitCard
-                  key={habitId} // ✅ Now using the correct unique key
+                  key={habitId}
                   habit={habit}
                   onToggle={() => handleToggleHabit(habitId)}
+                  onDelete={() => handleDeleteHabit(habitId)} // ✅ Pass delete function
                 />
               );
             })}

@@ -26,7 +26,6 @@ export default function Profile() {
   const { profile, habits, updateProfile } = useApp();
 
   if (!profile) {
-    // If there's no profile, go back to onboarding
     navigate("/onboarding");
     return null;
   }
@@ -50,23 +49,52 @@ export default function Profile() {
   };
 
   // ----------------------------
-  // Collect all completed day strings (ISO yyyy-mm-dd)
+  // Fully completed dates (all habits done)
   // ----------------------------
-  const completedDates = useMemo(() => {
+  const fullyCompletedDates = useMemo(() => {
     const set = new Set<string>();
-    habits.forEach((h) => (h.completedDates || []).forEach((d) => set.add(d)));
+
+    const allDates: string[] = [];
+    habits.forEach((h) => {
+      if (h.completedDates && Array.isArray(h.completedDates)) {
+        allDates.push(...h.completedDates);
+      } else if (h.completed && h.lastCompleted) {
+        const iso = new Date(h.lastCompleted).toISOString().split("T")[0];
+        allDates.push(iso);
+      }
+    });
+
+    const uniqueDates = Array.from(new Set(allDates));
+
+    uniqueDates.forEach((date) => {
+      const allDone = habits.every((h) => {
+        if (h.completedDates && Array.isArray(h.completedDates)) {
+          return h.completedDates.includes(date);
+        }
+        if (h.completed && h.lastCompleted) {
+          const lastCompletedDate = new Date(h.lastCompleted)
+            .toISOString()
+            .split("T")[0];
+          return lastCompletedDate === date;
+        }
+        return false;
+      });
+
+      if (allDone) set.add(date);
+    });
+
     return set;
   }, [habits]);
 
   // ----------------------------
-  // Compute current streak (consecutive days up to today)
+  // Compute current streak (consecutive fully completed days up to today)
   // ----------------------------
   const computeStreak = () => {
     let streak = 0;
     let cursor = new Date();
     while (true) {
       const iso = cursor.toISOString().split("T")[0];
-      if (completedDates.has(iso)) {
+      if (fullyCompletedDates.has(iso)) {
         streak++;
         cursor.setDate(cursor.getDate() - 1);
       } else break;
@@ -76,36 +104,33 @@ export default function Profile() {
   const currentStreak = computeStreak();
 
   // ----------------------------
-  // Calendar cells for viewed month (with leading & trailing padding)
+  // Calendar cells for viewed month (with padding)
   // ----------------------------
   const firstOfMonth = new Date(viewYear, viewMonth, 1);
-  const startOffset = firstOfMonth.getDay(); // 0..6 (Sun..Sat) — we use Sunday-first calendar
+  const startOffset = firstOfMonth.getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
   const cells: Array<{ day: number; iso?: string }> = [];
 
-  // leading empty cells
   for (let i = 0; i < startOffset; i++) cells.push({ day: 0 });
 
-  // month days
   for (let d = 1; d <= daysInMonth; d++) {
     const iso = `${viewYear}-${pad(viewMonth + 1)}-${pad(d)}`;
     cells.push({ day: d, iso });
   }
 
-  // trailing empty cells so total cells is a multiple of 7
   const trailing = (7 - (cells.length % 7)) % 7;
   for (let i = 0; i < trailing; i++) cells.push({ day: 0 });
 
   // ----------------------------
-  // Gem history (descending order)
+  // Gem history
   // ----------------------------
-  const gemHistory = Array.from(completedDates)
+  const gemHistory = Array.from(fullyCompletedDates)
     .sort((a, b) => (a < b ? 1 : -1))
     .map((date) => ({ date, gems: 10 }));
 
   // ----------------------------
-  // Edit Profile dialog state
+  // Edit Profile dialog
   // ----------------------------
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile.username);
@@ -161,16 +186,26 @@ export default function Profile() {
                     <div className="space-y-4 pt-2">
                       <div>
                         <label className="text-sm text-muted-foreground">Name</label>
-                        <Input value={name} onChange={(e) => setName(e.target.value)} className="mt-1" />
+                        <Input
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="mt-1"
+                        />
                       </div>
 
                       <div>
                         <label className="text-sm text-muted-foreground">Penguin Name</label>
-                        <Input value={pet} onChange={(e) => setPet(e.target.value)} className="mt-1" />
+                        <Input
+                          value={pet}
+                          onChange={(e) => setPet(e.target.value)}
+                          className="mt-1"
+                        />
                       </div>
 
                       <div className="flex justify-end gap-2 pt-3">
-                        <Button variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setEditing(false)}>
+                          Cancel
+                        </Button>
                         <Button onClick={saveEdit}>Save</Button>
                       </div>
                     </div>
@@ -178,7 +213,7 @@ export default function Profile() {
                 </Dialog>
               </div>
 
-              {/* small stat chips (icons only) */}
+              {/* small stat chips */}
               <div className="flex items-center justify-center md:justify-start gap-4 mt-4 flex-wrap">
                 <div className="glass px-4 py-2 rounded-xl flex items-center gap-2">
                   <Gem className="w-6 h-6 text-gem fill-gem" />
@@ -199,75 +234,82 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* ===========================
-    CALENDAR
-============================= */}
-<div className="glass rounded-3xl p-6 md:p-8 mb-8">
+        {/* CALENDAR */}
+        <div className="glass rounded-3xl p-6 md:p-8 mb-8">
+          <h2 className="text-2xl font-bold mb-6">Monthly Progress</h2>
 
-  <h2 className="text-2xl font-bold mb-6">Monthly Progress</h2>
+          <p className="text-center text-lg font-semibold mb-4">
+            {new Date(viewYear, viewMonth).toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
 
-  {/* Month Title */}
-  <p className="text-center text-lg font-semibold mb-4">
-    {new Date(viewYear, viewMonth).toLocaleString("default", {
-      month: "long",
-      year: "numeric",
-    })}
-  </p>
+          <div className="flex justify-between mb-4">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              onClick={goPrevMonth}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
 
-  {/* Month navigation */}
-  <div className="flex justify-between mb-4">
-    <Button variant="outline" size="icon" className="rounded-full" onClick={goPrevMonth}>
-      <ChevronLeft className="w-5 h-5" />
-    </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              onClick={goNextMonth}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
 
-    <Button variant="outline" size="icon" className="rounded-full" onClick={goNextMonth}>
-      <ChevronRight className="w-5 h-5" />
-    </Button>
-  </div>
+          <div className="grid grid-cols-7 text-center text-sm mb-1 font-medium">
+            {["Su", "M", "Tu", "W", "Th", "F", "Sa"].map((d) => (
+              <div key={d}>{d}</div>
+            ))}
+          </div>
 
-  {/* Days Header */}
-  <div className="grid grid-cols-7 text-center text-sm mb-1 font-medium">
-    {["Su", "M", "Tu", "W", "Th", "F", "Sa"].map((d) => (
-      <div key={d}>{d}</div>
-    ))}
-  </div>
+          <div className="grid grid-cols-7 gap-2 text-sm">
+            {cells.map((cell, index) => {
+              const active = cell.iso && fullyCompletedDates.has(cell.iso);
 
-  {/* Calendar Body */}
-  <div className="grid grid-cols-7 gap-2 text-sm">
-    {cells.map((cell, index) => {
-      const active = cell.iso && completedDates.has(cell.iso);
-
-      return (
-        <div
-          key={index}
-          className={`aspect-square flex items-center justify-center rounded-full
-            ${
-              cell.day === 0
-                ? "text-muted-foreground"
-                : active
-                ? "bg-primary/80 text-white font-semibold"
-                : "text-foreground"
-            }
-          `}
-        >
-          {cell.day || ""}
+              return (
+                <div
+                  key={index}
+                  className={`aspect-square flex items-center justify-center rounded-full
+                    ${
+                      cell.day === 0
+                        ? "text-muted-foreground"
+                        : active
+                        ? "bg-green-500 text-white font-semibold"
+                        : "text-foreground"
+                    }
+                  `}
+                >
+                  {cell.day || ""}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      );
-    })}
-  </div>
-</div>
-
 
         {/* GEM HISTORY */}
         <div className="glass rounded-3xl p-4 md:p-6">
           <h3 className="text-lg font-bold mb-3">Gem History</h3>
 
           {gemHistory.length === 0 ? (
-            <p className="text-muted-foreground">No gem events yet — complete habits to earn gems!</p>
+            <p className="text-muted-foreground">
+              No gem events yet — complete habits to earn gems!
+            </p>
           ) : (
             <div className="space-y-3">
               {gemHistory.map((g, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/30 transition">
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/30 transition"
+                >
                   <div>
                     <div className="font-medium">Completed Habit</div>
                     <div className="text-xs text-muted-foreground">{g.date}</div>
@@ -283,7 +325,11 @@ export default function Profile() {
         </div>
 
         {/* LOGOUT */}
-        <Button variant="destructive" className="w-full rounded-xl h-12" onClick={handleLogout}>
+        <Button
+          variant="destructive"
+          className="w-full rounded-xl h-12"
+          onClick={handleLogout}
+        >
           <LogOut className="w-4 h-4 mr-2" /> {APP_TEXT.buttons?.logout ?? "Logout"}
         </Button>
       </div>

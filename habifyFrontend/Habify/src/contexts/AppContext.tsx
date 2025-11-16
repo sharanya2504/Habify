@@ -15,6 +15,7 @@ interface AppContextType {
   setProfile: (profile: UserProfile) => void;
   addHabit: (habit: Habit) => void;
   toggleHabitComplete: (habitId: string) => void;
+  deleteHabit: (habitId: string) => void; // ✅ ADDED
   updateProfile: (updates: Partial<UserProfile>) => void;
   refreshHabits: () => Promise<void>;
 }
@@ -176,6 +177,59 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   // -------------------------------
   const addHabit = (habit: Habit) => {
     setHabits((prev) => [...prev, habit]);
+  };
+
+  // -------------------------------
+  // ✅ DELETE HABIT FUNCTION
+  // -------------------------------
+  const deleteHabit = async (habitId: string) => {
+    if (!habitId) {
+      console.error('❌ No habitId provided to deleteHabit');
+      return;
+    }
+
+    try {
+      console.log('🗑️ AppContext: Starting delete for habit:', habitId);
+      
+      // Find the habit first for backup
+      const habitToDelete = habits.find(h => (h.id === habitId || h._id === habitId));
+      if (!habitToDelete) {
+        console.log('❌ AppContext: Habit not found with ID:', habitId);
+        return;
+      }
+
+      // Remove from local state immediately for UI responsiveness
+      setHabits(prev => {
+        const updatedHabits = prev.filter(h => 
+          h.id !== habitId && h._id !== habitId
+        );
+        console.log('✅ AppContext: Local habits after deletion:', updatedHabits.length);
+        return updatedHabits;
+      });
+
+      // Try to delete from backend
+      console.log('🌐 AppContext: Calling backend API to delete habit');
+      
+      const response = await fetch(`http://localhost:3000/api/habits/${habitId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn('⚠️ AppContext: Backend deletion failed, but local state updated:', errorText);
+        // Don't throw error - we've already updated local state
+      } else {
+        console.log('✅ AppContext: Backend deletion successful');
+      }
+
+    } catch (error) {
+      console.error('❌ AppContext: Error deleting habit from backend:', error);
+      // Note: We don't revert local changes since deletion is destructive
+      // The user expects the habit to be gone even if backend fails
+    }
   };
 
   // -------------------------------
@@ -347,6 +401,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         setProfile,
         addHabit,
         toggleHabitComplete,
+        deleteHabit, // ✅ ADDED TO CONTEXT
         updateProfile,
         refreshHabits,
       }}
